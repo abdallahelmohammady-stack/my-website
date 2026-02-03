@@ -1,211 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cybersecurity Learning Roadmap">
+    <meta name="description" content="Professional Cybersecurity Learning Roadmap">
     <title>Cybersec Roadmap</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Orbitron', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            cyan: '#06b6d4',
+                            red: '#f43f5e',
+                            purple: '#8b5cf6',
+                            dark: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --cyber-black: #020202;
-            --cyber-cyan: #00f3ff;
-            --cyber-red: #ff003c;
-            --cyber-purple: #bc13fe;
-            --cyber-text: #e0e0e0;
-        }
-
+        /* Smooth Transition for Theme Switch */
         body {
-            background-color: var(--cyber-black);
-            color: var(--cyber-text);
-            font-family: 'Share Tech Mono', monospace;
-            overflow-x: hidden;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .cyber-particles {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.8); }
         
-        .particle {
-            position: absolute;
-            bottom: -50px;
-            color: rgba(0, 243, 255, 0.1);
-            font-size: 24px;
-            font-family: 'Orbitron', sans-serif;
-            animation: floatUp linear infinite;
-        }
+        /* Dark Mode Scrollbar */
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.5); }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8); }
 
-        @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 0; }
-            20% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(-120vh); opacity: 0; }
+        /* Subtle Grid Background */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
         }
-
-        @keyframes scanline-move {
-            0% { top: -10%; opacity: 0; }
-            50% { opacity: 0.4; }
-            100% { top: 110%; opacity: 0; }
-        }
-
-        .cyber-scan-beam {
-            position: fixed;
-            left: 0; width: 100%; height: 40px;
-            background: linear-gradient(to bottom, transparent, rgba(0, 243, 255, 0.15), transparent);
-            z-index: 40;
-            pointer-events: none;
-            animation: scanline-move 6s linear infinite;
-        }
-
-        .neon-text { text-shadow: 0 0 5px currentColor; }
-
-        .cyber-card {
-            background: rgba(10, 10, 10, 0.95);
-            border: 1px solid #333;
-            border-left: 4px solid var(--cyber-cyan);
-            position: relative;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-            transition: all 0.2s ease;
-            z-index: 10;
-        }
-        .cyber-card:hover {
-            border-left-width: 6px;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-            transform: translateX(5px);
-        }
-
-        .cyber-card.red-theme {
-            border-left-color: var(--cyber-red);
-        }
-        .cyber-card.red-theme:hover {
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
-        }
-
-        .cyber-card.purple-theme {
-            border-left-color: var(--cyber-purple);
-        }
-        .cyber-card.purple-theme:hover {
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
-        }
-
-        .glitch-hover:hover {
-            animation: glitch 0.2s infinite;
-            color: #fff;
-        }
-        @keyframes glitch {
-            0% { transform: skewX(0deg); }
-            20% { transform: skewX(-10deg); }
-            40% { transform: skewX(10deg); }
-            60% { transform: skewX(-5deg); }
-            80% { transform: skewX(5deg); }
-            100% { transform: skewX(0deg); }
-        }
-
-        .cyber-checkbox {
-            width: 16px; height: 16px;
-            border: 1px solid currentColor;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 12px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-        }
-        .cyber-checkbox.checked {
-            background: currentColor;
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        .progress-segment {
-            height: 100%; width: 4px; margin-right: 2px;
-            background-color: #222; display: inline-block; transition: background-color 0.3s;
-        }
-        .progress-segment.active {
-            box-shadow: 0 0 2px currentColor;
+        .dark .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-300 selection:bg-cyan-500 selection:text-white">
 
-    <div class="cyber-particles" id="particles"></div>
-    <div class="cyber-scan-beam"></div>
+    <!-- Background Effect -->
+    <div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
 
-    <div class="max-w-5xl mx-auto mb-8 border-b border-gray-800 pb-6 relative z-10">
-        <div class="flex justify-between items-end">
-            <div>
-                <h1 class="text-3xl md:text-5xl font-black text-white mb-2 glitch-hover cursor-default tracking-tighter">
-                    CYBERSEC<span class="text-xs align-top ml-2 text-cyan-500">v.3.0</span>
-                </h1>
-                <p class="text-cyan-500/80 tracking-widest text-sm uppercase border-l-2 border-cyan-500 pl-2">
-                    >> Secure Terminal Connection
-                </p>
+    <!-- Navbar / Header -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-6 h-6 text-cyan-600 dark:text-cyan-400"></i>
+                <span class="font-mono font-bold text-lg tracking-wider text-slate-900 dark:text-white">CYBER<span class="text-cyan-600 dark:text-cyan-400">SEC</span></span>
             </div>
-            <div class="hidden md:block text-right">
-                <div class="text-xs text-gray-500 mb-1">SYSTEM STATUS</div>
-                <div class="text-green-400 font-bold text-sm neon-text">OPTIMIZED</div>
-            </div>
+            
+            <button id="theme-toggle" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <!-- Icons will be swapped by JS -->
+                <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+            </button>
         </div>
-    </div>
+    </nav>
 
-    <div id="app" class="max-w-5xl mx-auto space-y-6 relative z-10"></div>
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-float">
+            <h1 class="text-4xl md:text-6xl font-black font-mono mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                SYSTEM ROADMAP
+            </h1>
+            <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+                A structured path to mastering cybersecurity, from foundational protocols to advanced penetration testing.
+            </p>
+        </div>
+
+        <!-- App Container -->
+        <div id="app" class="grid gap-6">
+            <!-- Content Injected Here -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 transition-colors duration-300 relative z-10">
+        <div class="max-w-6xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Designed for efficient learning. <span class="text-cyan-600 dark:text-cyan-400 font-mono">v.4.0 Professional</span></p>
+        </div>
+    </footer>
 
     <script>
-        const particlesContainer = document.getElementById('particles');
-        const symbols = ['0', '1', '{', '}', '<', '>', '/'];
-        for (let i = 0; i < 8; i++) {
-            const p = document.createElement('div');
-            p.classList.add('particle');
-            p.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = (Math.random() * 5 + 8) + 's';
-            p.style.animationDelay = (Math.random() * 5) + 's';
-            p.style.color = 'rgba(0, 243, 255, 0.08)';
-            particlesContainer.appendChild(p);
+        // --- 1. THEME LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // Check local storage or system preference
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                html.classList.remove('dark');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
         }
 
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                localStorage.theme = 'light';
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        });
+
+        initTheme();
+
+        // --- 2. DATA ---
         const initialBasicsSection = {
             id: 'basics',
-            title: 'Basics',
-            subtitle: 'Foundational Protocols',
-            orderLabel: '1ST_PHASE',
+            title: 'Foundations',
+            subtitle: 'Core Technologies & Systems',
+            orderLabel: 'PHASE 01',
             color: 'cyan',
             icon: 'cpu',
             categories: [
                 {
-                    id: 'computer-science',
-                    title: 'Computer Science',
-                    icon: 'cpu',
-                    color: 'cyan',
-                    courses: [
-                        { id: 'cs-1', title: 'CompTIA A+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiDdOMRB-ylvns-_8Zl1euV', completed: false }
-                    ],
+                    id: 'computer-science', title: 'Computer Science', icon: 'cpu', color: 'cyan',
+                    courses: [{ id: 'cs-1', title: 'CompTIA A+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiDdOMRB-ylvns-_8Zl1euV', completed: false }],
                 },
                 {
-                    id: 'networking',
-                    title: 'Networking',
-                    icon: 'network',
-                    color: 'cyan',
+                    id: 'networking', title: 'Networking', icon: 'network', color: 'cyan',
                     courses: [
                         { id: 'net-1', title: 'CompTIA Network+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiDdOMRB-ylvns-_8Zl1euV', completed: false },
                         { id: 'net-2', title: 'CCNA', link: 'https://www.youtube.com/playlist?list=PLy1Fx2HfcmWBpD_PI4AQpjeDK5-5q6TG7', completed: false }
                     ],
                 },
                 {
-                    id: 'system-admin',
-                    title: 'System Administration',
-                    icon: 'terminal',
-                    color: 'cyan',
+                    id: 'system-admin', title: 'System Administration', icon: 'terminal', color: 'cyan',
                     courses: [
                         { id: 'sys-1', title: 'Windows Server 2019', link: 'https://www.youtube.com/playlist?list=PLDxVq3TlR9y2sMXaL_yLp-r6pUpevgC-w', completed: false },
                         { id: 'sys-2', title: 'Linux System Administration', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv', completed: false },
@@ -213,15 +180,10 @@
                     ],
                 },
                 {
-                    id: 'programming',
-                    title: 'Programming',
-                    icon: 'code',
-                    color: 'cyan',
+                    id: 'programming', title: 'Programming', icon: 'code', color: 'cyan',
                     subCategories: [
                         {
-                            id: 'general-programming',
-                            title: 'General Programming',
-                            icon: 'braces',
+                            id: 'general-programming', title: 'General Programming', icon: 'braces',
                             courses: [
                                 { id: 'gp-3', title: 'C++', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAzjsz06gkzlSrlev53MGIKe', completed: false },
                                 { id: 'gp-4', title: 'Problem Solving (C++)', link: 'https://youtu.be/6hgBFDTTwEk?si=4G4jyeOjMh5lencf', completed: false },
@@ -230,9 +192,7 @@
                             ],
                         },
                         {
-                            id: 'web-programming',
-                            title: 'Web Programming',
-                            icon: 'file-code',
+                            id: 'web-programming', title: 'Web Programming', icon: 'file-code',
                             courses: [
                                 { id: 'wp-1', title: 'Crash Course', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv', completed: false },
                                 { id: 'wp-2', title: 'HTML', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS', completed: false },
@@ -251,36 +211,25 @@
 
         const initialPentestSection = {
             id: 'pentest',
-            title: 'Penetration Testing',
-            subtitle: 'Offensive Security',
-            orderLabel: '2ND_PHASE',
+            title: 'Offensive Security',
+            subtitle: 'Penetration Testing & Exploitation',
+            orderLabel: 'PHASE 02',
             color: 'red',
             icon: 'shield',
             categories: [
                 {
-                    id: 'security-basics',
-                    title: 'Security Basics',
-                    icon: 'shield',
-                    color: 'red',
-                    courses: [
-                        { id: 'sec-1', title: 'Security+ SY0-601 Prep', link: 'https://www.youtube.com/playlist?list=PLv7cogHXoVhXvHPzIl1dWtBiYUAL8baHj', completed: false }
-                    ],
+                    id: 'security-basics', title: 'Security Basics', icon: 'shield', color: 'red',
+                    courses: [{ id: 'sec-1', title: 'Security+ SY0-601 Prep', link: 'https://www.youtube.com/playlist?list=PLv7cogHXoVhXvHPzIl1dWtBiYUAL8baHj', completed: false }],
                 },
                 {
-                    id: 'pentesting',
-                    title: 'Penetration Testing',
-                    icon: 'lock',
-                    color: 'red',
+                    id: 'pentesting', title: 'Penetration Testing', icon: 'lock', color: 'red',
                     courses: [
                         { id: 'pen-1', title: 'eJPTv1 Prep', link: 'https://www.youtube.com/watch?v=MFanMkTGJSo', completed: false },
                         { id: 'pen-2', title: 'Web Application Penetration Testing Course', link: 'https://netriders.academy/courses/penetration-testing-student', completed: false }
                     ],
                 },
                 {
-                    id: 'wapt',
-                    title: 'WAPT',
-                    icon: 'bug',
-                    color: 'red',
+                    id: 'wapt', title: 'WAPT', icon: 'bug', color: 'red',
                     courses: [
                         { id: 'wapt-1', title: 'Web App Basics + Burp Suite + ZAP', link: 'https://www.youtube.com/playlist?list=PLX621demLUSaA7ngeN7UfVzYJihHnEfv0', completed: false },
                         { id: 'wapt-2', title: 'Crash Course', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAypWmEHEy3awR6Ek9sUe5ZS', completed: false },
@@ -288,46 +237,32 @@
                     ],
                 },
                 {
-                    id: 'oscp',
-                    title: 'OSCP',
-                    icon: 'zap',
-                    color: 'red',
-                    courses: [
-                        { id: 'oscp-1', title: 'OSCP', link: 'https://www.youtube.com/playlist?list=PLZmPGUyBFvUrvoa-NYzcUWFpxoZR11id_', completed: false }
-                    ],
+                    id: 'oscp', title: 'OSCP', icon: 'zap', color: 'red',
+                    courses: [{ id: 'oscp-1', title: 'OSCP', link: 'https://www.youtube.com/playlist?list=PLZmPGUyBFvUrvoa-NYzcUWFpxoZR11id_', completed: false }],
                 },
                 {
-                    id: 'active-directory',
-                    title: 'ActiveDirectory',
-                    icon: 'terminal',
-                    color: 'red',
-                    courses: [
-                        { id: 'ad-1', title: 'ActiveDirectory-101', link: 'https://www.youtube.com/watch?v=6GPZthxEKU0', completed: false }
-                    ],
+                    id: 'active-directory', title: 'ActiveDirectory', icon: 'terminal', color: 'red',
+                    courses: [{ id: 'ad-1', title: 'ActiveDirectory-101', link: 'https://www.youtube.com/watch?v=6GPZthxEKU0', completed: false }],
                 },
             ],
         };
 
         const initialMonitoringSection = {
             id: 'monitoring',
-            title: 'Continuous Monitoring',
-            subtitle: 'Defense & Assessment',
-            orderLabel: '3RD_PHASE',
+            title: 'Defense & Monitoring',
+            subtitle: 'Blue Team Operations',
+            orderLabel: 'PHASE 03',
             color: 'purple',
             icon: 'activity',
             categories: [
                 {
-                    id: 'owasp',
-                    title: 'OWASP Top 10',
-                    icon: 'eye',
-                    color: 'purple',
-                    courses: [
-                        { id: 'owasp-1', title: 'OWASP Top 10 2025', link: 'https://owasp.org/Top10/2025/', completed: false }
-                    ],
+                    id: 'owasp', title: 'OWASP Top 10', icon: 'eye', color: 'purple',
+                    courses: [{ id: 'owasp-1', title: 'OWASP Top 10 2025', link: 'https://owasp.org/Top10/2025/', completed: false }],
                 },
             ],
         };
 
+        // --- 3. APP LOGIC ---
         let sections = [initialBasicsSection, initialPentestSection, initialMonitoringSection];
         let collapsedCategories = {};
 
@@ -337,9 +272,27 @@
 
         const theme = (color) => {
             const map = {
-                cyan: { border: 'border-cyan-500/50', text: 'text-cyan-400', bg: 'bg-cyan-500/5', barColor: 'text-cyan-400', themeClass: '' },
-                red: { border: 'border-red-500/50', text: 'text-red-500', bg: 'bg-red-500/5', barColor: 'text-red-500', themeClass: 'red-theme' },
-                purple: { border: 'border-purple-500/50', text: 'text-purple-400', bg: 'bg-purple-500/5', barColor: 'text-purple-400', themeClass: 'purple-theme' }
+                cyan: { 
+                    bg: 'bg-white dark:bg-slate-800/50', 
+                    border: 'border-slate-200 dark:border-slate-700', 
+                    text: 'text-cyan-600 dark:text-cyan-400', 
+                    bgAccent: 'bg-cyan-50 dark:bg-cyan-500/10',
+                    bar: 'bg-cyan-500'
+                },
+                red: { 
+                    bg: 'bg-white dark:bg-slate-800/50', 
+                    border: 'border-slate-200 dark:border-slate-700', 
+                    text: 'text-rose-600 dark:text-rose-400', 
+                    bgAccent: 'bg-rose-50 dark:bg-rose-500/10',
+                    bar: 'bg-rose-500'
+                },
+                purple: { 
+                    bg: 'bg-white dark:bg-slate-800/50', 
+                    border: 'border-slate-200 dark:border-slate-700', 
+                    text: 'text-violet-600 dark:text-violet-400', 
+                    bgAccent: 'bg-violet-50 dark:bg-violet-500/10',
+                    bar: 'bg-violet-500'
+                }
             };
             return map[color] || map.cyan;
         };
@@ -361,18 +314,6 @@
             render();
         };
 
-        const renderCyberProgress = (percent, colorClass) => {
-            const totalSegments = 20;
-            const activeSegments = Math.round((percent / 100) * totalSegments);
-            let html = '<div class="flex h-2 w-full bg-gray-900 border border-gray-800 p-0.5 overflow-hidden">';
-            for(let i = 0; i < totalSegments; i++) {
-                const isActive = i < activeSegments;
-                html += `<div class="progress-segment flex-1 ${isActive ? colorClass + ' bg-current' : 'bg-gray-800'}"></div>`;
-            }
-            html += '</div>';
-            return html;
-        };
-
         const render = () => {
             const app = document.getElementById('app');
             app.innerHTML = '';
@@ -382,30 +323,42 @@
                 const courses = getAllCourses(sec);
                 const progress = calcProgress(courses);
 
+                // Card
                 const card = document.createElement('div');
-                card.className = `cyber-card ${styles.border} ${styles.themeClass} p-0 overflow-hidden`;
+                card.className = `${styles.bg} border ${styles.border} rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden backdrop-blur-sm`;
 
+                // Header
                 card.innerHTML = `
-                    <div class="p-4 border-b border-gray-800 bg-black/40 flex justify-between items-center relative">
-                        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-${sec.color}-500 to-transparent opacity-50"></div>
-                        <div class="flex items-center z-10">
-                            <div class="p-2 border ${styles.border} ${styles.bg} text-current mr-3">
-                                <i data-lucide="${sec.icon}" class="w-5 h-5"></i>
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 rounded-xl ${styles.bgAccent} text-current">
+                                <i data-lucide="${sec.icon}" class="w-6 h-6 ${styles.text}"></i>
                             </div>
                             <div>
-                                <h2 class="text-xl font-bold ${styles.text} tracking-wide neon-text">${sec.title}</h2>
-                                <div class="text-[10px] text-gray-500 uppercase tracking-widest">${sec.subtitle} // ${sec.orderLabel}</div>
+                                <h2 class="text-xl font-bold text-slate-800 dark:text-white font-mono tracking-tight">${sec.title}</h2>
+                                <div class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                    <span>${sec.subtitle}</span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span class="font-mono text-xs uppercase opacity-70">${sec.orderLabel}</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="text-right hidden sm:block">
-                            <div class="text-2xl font-black ${styles.text}">${progress}%</div>
-                            <div class="text-[10px] ${styles.text} opacity-70">COMPLETE</div>
+                        <div class="flex items-center gap-4 w-full md:w-auto">
+                            <div class="flex-1 md:w-32">
+                                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                                    <span>Progress</span>
+                                    <span class="${styles.text}">${progress}%</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
+                                    <div class="h-full ${styles.bar} rounded-full transition-all duration-500 ease-out" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 const body = document.createElement('div');
-                body.className = 'p-4';
+                body.className = 'p-6';
 
                 sec.categories.forEach(cat => {
                     const catCourses = getCourses(cat);
@@ -413,50 +366,57 @@
                     const isCollapsed = collapsedCategories[cat.id];
 
                     const catBox = document.createElement('div');
-                    catBox.className = 'mb-4 last:mb-0 border border-gray-800 bg-black/20 hover:border-gray-700 transition-colors';
+                    catBox.className = 'mb-4 last:mb-0 border border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden';
 
                     catBox.innerHTML = `
-                        <div class="p-3 cursor-pointer flex justify-between items-center transition-colors bg-gray-900/30" onclick="toggleCollapse('${cat.id}')">
-                            <div class="flex items-center">
-                                <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-4 h-4 text-gray-500 mr-2"></i>
-                                <div class="font-bold ${styles.text} text-sm uppercase tracking-wider">${cat.title}</div>
+                        <div class="p-4 cursor-pointer flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors bg-slate-50/50 dark:bg-slate-900/20" onclick="toggleCollapse('${cat.id}')">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-4 h-4 text-slate-400"></i>
+                                <div class="font-semibold text-slate-700 dark:text-slate-200">${cat.title}</div>
                             </div>
-                            <div class="text-[10px] font-mono text-gray-400 border border-gray-800 px-1.5 py-0.5 rounded">${catProg}%</div>
+                            <div class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                                ${catProg}%
+                            </div>
                         </div>
                     `;
 
                     if (!isCollapsed) {
                         const list = document.createElement('div');
-                        list.className = 'border-t border-gray-800 bg-black/20';
+                        list.className = 'border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/10';
                         
                         const renderItem = (c) => {
                             const row = document.createElement('div');
-                            row.className = 'p-3 border-b border-gray-800/50 hover:bg-white/5 transition-colors flex items-center justify-between group';
-                            const colorStyle = c.completed ? `border-current text-current ${styles.text}` : 'border-gray-600 text-gray-600';
-                            const textStyle = c.completed ? styles.text + ' font-bold' : 'text-gray-400';
+                            row.className = 'p-4 border-b border-slate-50 dark:border-slate-800/50 last:border-0 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors';
                             
+                            const checkClass = c.completed 
+                                ? 'bg-cyan-500 border-cyan-500 text-white' 
+                                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-transparent';
+                            
+                            const textClass = c.completed 
+                                ? 'text-slate-900 dark:text-white font-medium line-through decoration-slate-400 opacity-70' 
+                                : 'text-slate-600 dark:text-slate-300';
+
                             row.innerHTML = `
-                                <div class="flex items-center cursor-pointer flex-1" onclick="toggleCourse('${c.id}', '${sec.id}')">
-                                    <div class="cyber-checkbox ${c.completed ? 'checked' : ''} ${colorStyle}">
-                                        ${c.completed ? '<i data-lucide="check" class="w-3 h-3 text-black font-bold"></i>' : ''}
+                                <div class="flex items-center cursor-pointer flex-1 gap-3" onclick="toggleCourse('${c.id}', '${sec.id}')">
+                                    <div class="relative w-5 h-5 flex-shrink-0 transition-all duration-200">
+                                        <div class="absolute inset-0 rounded-md ${checkClass} shadow-sm"></div>
+                                        ${c.completed ? '<i data-lucide="check" class="w-3.5 h-3.5 absolute top-0.5 left-0.5"></i>' : ''}
                                     </div>
-                                    <span class="text-sm ${textStyle} group-hover:text-white transition-colors">${c.title}</span>
+                                    <span class="text-sm ${textClass} group-hover:text-slate-900 dark:group-hover:text-white transition-colors">${c.title}</span>
                                 </div>
-                                <a href="${c.link}" target="_blank" class="p-1.5 text-gray-600 hover:text-cyan-400 transition-colors ml-2">
+                                <a href="${c.link}" target="_blank" class="p-2 text-slate-400 hover:text-cyan-500 transition-colors rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-500/10">
                                     <i data-lucide="external-link" class="w-4 h-4"></i>
                                 </a>
                             `;
                             return row;
                         };
 
-                        if (cat.courses) {
-                            cat.courses.forEach(c => list.appendChild(renderItem(c)));
-                        }
+                        if (cat.courses) cat.courses.forEach(c => list.appendChild(renderItem(c)));
                         if (cat.subCategories) {
                             cat.subCategories.forEach(sub => {
                                 const subHeader = document.createElement('div');
-                                subHeader.className = 'px-3 py-2 bg-gray-900/60 text-[10px] text-gray-500 font-bold tracking-wider uppercase border-b border-gray-800 flex items-center';
-                                subHeader.innerHTML = `<i data-lucide="${sub.icon}" class="w-3 h-3 mr-1.5"></i> ${sub.title}`;
+                                subHeader.className = 'px-4 py-2 bg-slate-50 dark:bg-slate-800/30 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 flex items-center gap-2';
+                                subHeader.innerHTML = `<i data-lucide="${sub.icon}" class="w-3 h-3"></i> ${sub.title}`;
                                 list.appendChild(subHeader);
                                 sub.courses.forEach(c => list.appendChild(renderItem(c)));
                             });
@@ -465,16 +425,6 @@
                     }
                     body.appendChild(catBox);
                 });
-
-                body.innerHTML += `
-                    <div class="mt-4 pt-4 border-t border-gray-800 flex items-center justify-between">
-                         <div class="text-[10px] text-gray-500 uppercase">INTEGRITY</div>
-                         <div class="text-[10px] text-gray-500 uppercase">${progress}%</div>
-                    </div>
-                    <div class="mt-1">
-                        ${renderCyberProgress(progress, styles.barColor)}
-                    </div>
-                `;
 
                 card.appendChild(body);
                 app.appendChild(card);
