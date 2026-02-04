@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Cybersecurity Learning Roadmap">
     <title>My Roadmap</title>
-    <link rel="icon" href="favicon.png">
+   <link rel="icon" href="favicon.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -105,6 +105,15 @@
             background: radial-gradient(circle, transparent 50%, #000000 100%);
             z-index: 2;
             pointer-events: none;
+        }
+
+        /* Make the footer fixed at the bottom */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
         }
     </style>
 </head>
@@ -450,6 +459,11 @@
         };
 
         const openSection = (id) => {
+            const sec = sections.find(s => s.id === id);
+            if (!sec) {
+                console.error(`Section with id '${id}' not found.`);
+                return;
+            }
             currentView = id;
             render();
         };
@@ -467,8 +481,6 @@
 
                 sections.forEach(sec => {
                     const styles = theme(sec.color);
-                    const courses = getAllCourses(sec);
-                    const progress = calcProgress(courses);
 
                     const card = document.createElement('div');
                     card.className = `group relative w-full rounded-2xl overflow-hidden border ${styles.border} ${styles.bg} shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 cursor-pointer flex flex-col h-full ${styles.hover}`;
@@ -479,13 +491,6 @@
                         <div class="w-full h-48 overflow-hidden relative">
                             <img src="${sec.image}" alt="${sec.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/40 group-hover:from-black/20 to-transparent"></div>
-                            
-                            <!-- Floating Progress Badge -->
-                            <div class="absolute top-4 right-4">
-                                <div class="inline-block px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-xs font-bold font-mono text-white border border-white/20 shadow-lg group-hover:scale-110 transition-transform">
-                                    ${progress}% COMPLETE
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Content Body (Bottom) -->
@@ -505,17 +510,6 @@
                                     ${sec.description}
                                 </p>
                             </div>
-
-                            <!-- Progress Bar -->
-                            <div class="w-full">
-                                <div class="flex justify-between text-xs font-bold text-slate-500 dark:text-gray-500 mb-2 uppercase tracking-wider">
-                                    <span>Progress</span>
-                                    <span class="${styles.text}">${progress}%</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-200 dark:bg-gray-900 rounded-full overflow-hidden">
-                                    <div class="h-full ${styles.bar} rounded-full transition-all duration-500 ease-out" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
                         </div>
                     `;
                     cardsContainer.appendChild(card);
@@ -530,8 +524,6 @@
                 if(!sec) return;
 
                 const styles = theme(sec.color);
-                const courses = getAllCourses(sec);
-                const progress = calcProgress(courses);
 
                 const card = document.createElement('div');
                 card.className = `${styles.bg} border ${styles.border} rounded-2xl shadow-xl overflow-hidden`;
@@ -546,10 +538,6 @@
                             <h2 class="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight uppercase">${sec.title}</h2>
                             <div class="text-sm font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest mt-1">${sec.subtitle}</div>
                         </div>
-                        <div class="text-right min-w-[100px]">
-                             <div class="text-4xl font-black ${styles.text}">${progress}%</div>
-                             <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Done</div>
-                        </div>
                     </div>
                 `;
 
@@ -557,8 +545,6 @@
                 body.className = 'p-8';
 
                 sec.categories.forEach(cat => {
-                    const catCourses = getCourses(cat);
-                    const catProg = calcProgress(catCourses);
                     const isCollapsed = collapsedCategories[cat.id];
 
                     const catBox = document.createElement('div');
@@ -570,66 +556,50 @@
                                 <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-5 h-5 text-slate-400 dark:text-gray-500"></i>
                                 <div class="font-bold text-lg text-slate-800 dark:text-gray-200 tracking-wide">${cat.title}</div>
                             </div>
-                            <div class="text-xs font-mono font-bold px-4 py-2 rounded-lg bg-white dark:bg-black border border-slate-200 dark:border-gray-800 text-slate-500 dark:text-gray-500 shadow-sm">
-                                ${catProg}%
-                            </div>
                         </div>
                     `;
 
                     if (!isCollapsed) {
                         const list = document.createElement('div');
                         list.className = 'border-t border-slate-200 dark:border-gray-800 bg-white dark:bg-black';
-                        
-                        const renderItem = (c) => {
+
+                        if (cat.courses) cat.courses.forEach(c => {
                             const row = document.createElement('div');
                             row.className = 'p-5 border-b border-slate-200 dark:border-gray-800 last:border-0 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors gap-6';
-                            
-                            const checkClass = c.completed 
-                                ? 'bg-emerald-500 border-emerald-500 text-white' 
-                                : 'bg-white dark:bg-[#1a1a1a] border-slate-300 dark:border-gray-700 text-transparent hover:border-emerald-500';
-                            
-                            const textClass = c.completed 
-                                ? 'text-slate-900 dark:text-white font-bold line-through decoration-slate-400 opacity-50' 
-                                : 'text-slate-800 dark:text-gray-200 font-bold';
-
-                            const completeBtnClass = c.completed
-                                ? 'bg-emerald-500 text-white border-emerald-500'
-                                : 'bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-slate-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-400 hover:text-emerald-500';
-
                             row.innerHTML = `
-                                <div class="flex items-center cursor-pointer flex-1 gap-4" onclick="toggleCourse('${c.id}', '${sec.id}')">
-                                    <div class="relative w-6 h-6 flex-shrink-0 transition-all duration-200">
-                                        <div class="absolute inset-0 rounded-md ${checkClass} border-2"></div>
-                                        ${c.completed ? '<i data-lucide="check" class="w-4 h-4 absolute top-0.5 left-0.5"></i>' : ''}
-                                    </div>
-                                    <span class="text-base ${textClass} group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate">${c.title}</span>
+                                <div class="flex items-center cursor-pointer flex-1 gap-4">
+                                    <span class="text-base text-slate-800 dark:text-gray-200 font-bold group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate">${c.title}</span>
                                 </div>
-                                
-                                <div class="flex items-center gap-3 ml-4">
-                                    <button onclick="event.stopPropagation(); toggleCourse('${c.id}', '${sec.id}')" 
-                                        class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-200 hover:scale-110 shadow-sm ${completeBtnClass}"
-                                        title="${c.completed ? 'Mark Incomplete' : 'Mark Complete'}">
-                                        <i data-lucide="check" class="w-5 h-5"></i>
-                                    </button>
-                                    
-                                    <a href="${c.link}" target="_blank" 
-                                        class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-2 border-slate-300 dark:border-gray-700 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all duration-200 hover:scale-110 shadow-sm"
-                                        title="Open Link">
-                                        <i data-lucide="external-link" class="w-5 h-5"></i>
-                                    </a>
-                                </div>
+                                <a href="${c.link}" target="_blank" 
+                                    class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-2 border-slate-300 dark:border-gray-700 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all duration-200 hover:scale-110 shadow-sm"
+                                    title="Open Link">
+                                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                                </a>
                             `;
-                            return row;
-                        };
+                            list.appendChild(row);
+                        });
 
-                        if (cat.courses) cat.courses.forEach(c => list.appendChild(renderItem(c)));
                         if (cat.subCategories) {
                             cat.subCategories.forEach(sub => {
                                 const subHeader = document.createElement('div');
                                 subHeader.className = 'px-6 py-3 bg-slate-50 dark:bg-[#0a0a0a] text-xs font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest border-b border-slate-200 dark:border-gray-800 flex items-center gap-3';
                                 subHeader.innerHTML = `<i data-lucide="${sub.icon}" class="w-4 h-4"></i> ${sub.title}`;
                                 list.appendChild(subHeader);
-                                sub.courses.forEach(c => list.appendChild(renderItem(c)));
+                                sub.courses.forEach(c => {
+                                    const subRow = document.createElement('div');
+                                    subRow.className = 'p-5 border-b border-slate-200 dark:border-gray-800 last:border-0 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors gap-6';
+                                    subRow.innerHTML = `
+                                        <div class="flex items-center cursor-pointer flex-1 gap-4">
+                                            <span class="text-base text-slate-800 dark:text-gray-200 font-bold group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate">${c.title}</span>
+                                        </div>
+                                        <a href="${c.link}" target="_blank" 
+                                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-2 border-slate-300 dark:border-gray-700 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all duration-200 hover:scale-110 shadow-sm"
+                                            title="Open Link">
+                                            <i data-lucide="external-link" class="w-5 h-5"></i>
+                                        </a>
+                                    `;
+                                    list.appendChild(subRow);
+                                });
                             });
                         }
                         catBox.appendChild(list);
