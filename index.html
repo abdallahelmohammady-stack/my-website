@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
+<html lang="en"><!-- Removed hardcoded class to allow switching --><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Professional Cybersecurity Learning Roadmap">
+    <meta name="description" content="Cybersecurity Learning Roadmap">
     <title>Cybersec Roadmap</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&amp;family=Orbitron:wght@500;700;900&amp;display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Re-enabled class-based toggling
             theme: {
                 extend: {
                     fontFamily: {
@@ -23,20 +22,34 @@
                     },
                     colors: {
                         cyber: {
-                            cyan: '#06b6d4',
-                            red: '#f43f5e',
-                            purple: '#8b5cf6',
-                            dark: '#0f172a',
+                            cyan: '#00f3ff',
+                            red: '#ff003c',
+                            purple: '#bc13fe',
+                            dark: '#000000', 
                         }
                     },
                     animation: {
+                        'scanline': 'scanline 4s linear infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glitch': 'glitch 0.4s cubic-bezier(.25, .46, .45, .94) both infinite',
                     },
                     keyframes: {
+                        scanline: {
+                            '0%': { top: '-10%', opacity: '0' },
+                            '50%': { opacity: '0.6', boxShadow: '0 0 15px #00f3ff' },
+                            '100%': { top: '110%', opacity: '0' },
+                        },
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glitch: {
+                            '0%': { transform: 'translate(0)' },
+                            '20%': { transform: 'translate(-2px, 2px)' },
+                            '40%': { transform: 'translate(-2px, -2px)' },
+                            '60%': { transform: 'translate(2px, 2px)' },
+                            '80%': { transform: 'translate(2px, -2px)' },
+                            '100%': { transform: 'translate(0)' }
                         }
                     }
                 }
@@ -45,89 +58,194 @@
     </script>
 
     <style>
-        /* Smooth Transition for Theme Switch */
         body {
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Re-enabled transitions */
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.5); }
         
-        /* Dark Mode Scrollbar */
-        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.5); }
-        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8); }
+        .dark ::-webkit-scrollbar-track { background: #000; }
+        .dark ::-webkit-scrollbar-thumb { background: #333; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-        /* Subtle Grid Background */
-        .bg-grid-pattern {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+        /* Matrix Canvas Background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; 
+            pointer-events: none; 
+            opacity: 0.3; 
         }
-        .dark .bg-grid-pattern {
-            background-image: linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+        
+        /* Scanning Beam Effect */
+        .scan-beam {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 243, 255, 0.2), transparent);
+            z-index: 1;
+            pointer-events: none;
+            animation: scanline 4s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        /* Vignette Overlay */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 50%, #000000 100%);
+            z-index: 2;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-300 selection:bg-cyan-500 selection:text-white">
+<body class="bg-white text-slate-900 dark:bg-black dark:text-white min-h-screen selection:bg-cyan-500 selection:text-black dark:selection:text-white relative overflow-x-hidden font-sans">
 
-    <!-- Background Effect -->
-    <div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+    <!-- Matrix Rain Canvas -->
+    <canvas id="matrix-canvas"></canvas>
+    
+    <!-- Scanning Beam Animation -->
+    <div class="scan-beam"></div>
+    
+    <!-- Vignette Overlay -->
+    <div class="vignette"></div>
 
-    <!-- Navbar / Header -->
-    <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i data-lucide="shield-check" class="w-6 h-6 text-cyan-600 dark:text-cyan-400"></i>
-                <span class="font-mono font-bold text-lg tracking-wider text-slate-900 dark:text-white">CYBER<span class="text-cyan-600 dark:text-cyan-400">SEC</span></span>
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/95 dark:bg-black/95 backdrop-blur-lg border-b border-slate-200 dark:border-gray-900 transition-colors duration-300 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
+                <div class="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
+                    <i data-lucide="terminal" class="w-6 h-6 text-cyan-600 dark:text-cyan-400"></i>
+                </div>
+                <div>
+                    <span class="font-mono font-bold text-xl tracking-tighter text-slate-900 dark:text-white block leading-none">CYBER<span class="text-cyan-600 dark:text-cyan-400">PENTEST</span></span>
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-gray-600 font-bold">Roadmap System</span>
+                </div>
             </div>
             
-            <button id="theme-toggle" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                <!-- Icons will be swapped by JS -->
+            <!-- THEME TOGGLE BUTTON (RESTORED) -->
+            <button id="theme-toggle" class="p-3 rounded-xl bg-slate-100 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-800 transition-all shadow-sm hover:shadow-md">
                 <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
             </button>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-20">
         
-        <!-- Hero Section -->
-        <div class="text-center mb-16 animate-float">
-            <h1 class="text-4xl md:text-6xl font-black font-mono mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
-                SYSTEM ROADMAP
-            </h1>
-            <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-                A structured path to mastering cybersecurity, from foundational protocols to advanced penetration testing.
-            </p>
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="hidden animate-float">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl md:text-7xl font-black font-mono mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-gray-600 uppercase">
+                    Select track</h1>
+                <p class="text-lg md:text-xl font-light text-slate-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    Initiate your training. Choose a phase to access classified learning materials.
+                </p>
+            </div>
+
+            <!-- GRID LAYOUT (Side by Side) -->
+            <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+                <!-- Cards injected here -->
+            </div>
         </div>
 
-        <!-- App Container -->
-        <div id="app" class="grid gap-6">
-            <!-- Content Injected Here -->
+        <!-- Detail View -->
+        <div id="detail-view" class="hidden">
+            <button onclick="goHome()" class="mb-8 flex items-center gap-2 text-sm font-mono font-bold text-cyan-600 dark:text-cyan-400 hover:underline opacity-80 hover:opacity-100 transition-all tracking-wide">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> RETURN TO PROTOCOLS
+            </button>
+
+            <div id="section-container"></div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 transition-colors duration-300 relative z-10">
-        <div class="max-w-6xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>Designed for efficient learning. <span class="text-cyan-600 dark:text-cyan-400 font-mono">v.4.0 Professional</span></p>
+    <footer class="border-t border-slate-200 dark:border-gray-900 bg-white/95 dark:bg-black/95 backdrop-blur-sm py-12 transition-colors duration-300 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="font-mono text-slate-500 dark:text-gray-700 font-bold tracking-widest uppercase text-xs mb-2">System Status: Online</p>
+            <p class="text-slate-400 dark:text-gray-800 text-sm">made by abdallah elmohammady&nbsp;<span class="text-cyan-600 dark:text-cyan-400 font-mono ml-2">v.1.0 Switchable</span></p>
         </div>
     </footer>
 
     <script>
-        // --- 1. THEME LOGIC ---
+        // --- 1. MATRIX RAIN ANIMATION ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const chars = '01<>/\\[]{}ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        const fontSize = 18; 
+        const columns = width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function drawMatrix() {
+            // Fade color depends on theme
+            ctx.fillStyle = isDark() ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Text color depends on theme (Green in dark, Blue-ish in light)
+            ctx.fillStyle = isDark() ? '#0f0' : 'rgba(6, 182, 212, 0.4)'; 
+            ctx.font = 'bold ' + fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                
+                if(isDark()) {
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = '#0f0';
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                ctx.shadowBlur = 0;
+
+                if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+            requestAnimationFrame(drawMatrix);
+        }
+
+        function isDark() {
+            return document.documentElement.classList.contains('dark');
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        drawMatrix();
+
+        // --- 2. THEME LOGIC (RESTORED) ---
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
         const html = document.documentElement;
 
-        // Check local storage or system preference
         function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            // Default to Dark if user hasn't chosen, otherwise respect localStorage
+            const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (isDark) {
                 html.classList.add('dark');
                 themeIcon.setAttribute('data-lucide', 'sun');
             } else {
@@ -151,32 +269,28 @@
 
         initTheme();
 
-        // --- 2. DATA ---
-        const initialBasicsSection = {
-            id: 'basics',
-            title: 'Foundations',
-            subtitle: 'Core Technologies & Systems',
-            orderLabel: 'PHASE 01',
+        // --- 3. DATA ---
+        
+        // Fundamentals
+        const initialFundamentalsSection = {
+            id: 'fundamentals',
+            title: 'Fundamentals',
+            subtitle: 'Core Technologies',
             color: 'cyan',
             icon: 'cpu',
+            image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop', 
+            description: 'The foundation. Understand internal workings of computers, OS, and networks.',
             categories: [
                 {
                     id: 'computer-science', title: 'Computer Science', icon: 'cpu', color: 'cyan',
                     courses: [{ id: 'cs-1', title: 'CompTIA A+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiDdOMRB-ylvns-_8Zl1euV', completed: false }],
                 },
                 {
-                    id: 'networking', title: 'Networking', icon: 'network', color: 'cyan',
-                    courses: [
-                        { id: 'net-1', title: 'CompTIA Network+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiDdOMRB-ylvns-_8Zl1euV', completed: false },
-                        { id: 'net-2', title: 'CCNA', link: 'https://www.youtube.com/playlist?list=PLy1Fx2HfcmWBpD_PI4AQpjeDK5-5q6TG7', completed: false }
-                    ],
-                },
-                {
                     id: 'system-admin', title: 'System Administration', icon: 'terminal', color: 'cyan',
                     courses: [
                         { id: 'sys-1', title: 'Windows Server 2019', link: 'https://www.youtube.com/playlist?list=PLDxVq3TlR9y2sMXaL_yLp-r6pUpevgC-w', completed: false },
-                        { id: 'sys-2', title: 'Linux System Administration', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv', completed: false },
-                        { id: 'sys-3', title: 'Windows Commands / PowerShell', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAy41u35AqJUrI-H83DObUDq', completed: false }
+                        { id: 'sys-2', title: 'Linux System Administration', link: 'https://www.youtube.com/playlist?list=PLy1Fx2HfcmWBpD_PI4AQpjeDK5-5q6TG7', completed: false },
+                        { id: 'sys-3', title: 'Windows Commands / PowerShell', link: 'https://www.youtube.com/watch?v=6GPZthxEKU0', completed: false }
                     ],
                 },
                 {
@@ -185,75 +299,86 @@
                         {
                             id: 'general-programming', title: 'General Programming', icon: 'braces',
                             courses: [
-                                { id: 'gp-3', title: 'C++', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAzjsz06gkzlSrlev53MGIKe', completed: false },
-                                { id: 'gp-4', title: 'Problem Solving (C++)', link: 'https://youtu.be/6hgBFDTTwEk?si=4G4jyeOjMh5lencf', completed: false },
+                                { id: 'gp-3', title: 'C++', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS', completed: false },
+                                { id: 'gp-4', title: 'Problem Solving (C++)', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAyX4CCOP--TR36SfD5g7gru', completed: false },
                                 { id: 'gp-1', title: 'Python', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs', completed: false },
-                                { id: 'gp-2', title: 'Problem Solving (Algorithms)', link: 'https://youtu.be/N-WPYk417yE?si=n82BssSqIhK0mS0y', completed: false }
+                                { id: 'gp-2', title: 'Problem Solving (Python)', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAxCjHi-HIfNoZrMkfbuvVDY', completed: false }
                             ],
                         },
                         {
                             id: 'web-programming', title: 'Web Programming', icon: 'file-code',
                             courses: [
-                                { id: 'wp-1', title: 'Crash Course', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv', completed: false },
-                                { id: 'wp-2', title: 'HTML', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS', completed: false },
-                                { id: 'wp-3', title: 'CSS', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAxCjHi-HIfNoZrMkfbuvVDY', completed: false },
-                                { id: 'wp-4', title: 'JavaScript', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx4CCOP--TR36SfD5g7gru', completed: false },
-                                { id: 'wp-5', title: 'PHP', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAw_t_XWUFbBX-c9MafPk9ji', completed: false },
-                                { id: 'wp-6', title: 'MySQL', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAypWmEHEy3awR6Ek9sUe5ZS', completed: false },
-                                { id: 'wp-7', title: 'CRUD', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAypWmEHEy3awR6Ek9sUe5ZS', completed: false },
+                                { id: 'wp-1', title: 'Crash Course for HTML&CSS', link: 'https://youtu.be/Pwatx1n1Ws0?si=CjPGkiIwMw_sfpMy', completed: false },
+                                { id: 'wp-2', title: 'HTML', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAw_t_XWUFbBX-c9MafPk9ji', completed: false },
+                                { id: 'wp-3', title: 'CSS', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAzjsz06gkzlSrlev53MGIKe', completed: false },
+                                { id: 'wp-4', title: 'JavaScript', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAx3kiplQR_oeDqLDBUDYwVv', completed: false },
+                                { id: 'wp-1', title: 'Crash Course for PHP', link: 'https://youtu.be/pszZMzI9a7A?si=zOc2Kc0WGozYRygI', completed: false },
+                                { id: 'wp-5', title: 'PHP', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAy41u35AqJUrI-H83DObUDq', completed: false },
+                                { id: 'wp-6', title: 'MySQL', link: 'https://youtu.be/N-WPYk417yE?si=n82BssSqIhK0mS0y', completed: false },
+                                { id: 'wp-7', title: 'CRUD', link: 'https://youtu.be/6hgBFDTTwEk?si=4G4jyeOjMh5lencf', completed: false },
                                 { id: 'wp-8', title: 'Secure Web App', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAypWmEHEy3awR6Ek9sUe5ZS', completed: false }
                             ],
                         },
                     ],
                 },
+                {
+                    id: 'networking', title: 'Networking', icon: 'network', color: 'cyan', 
+                    courses: [
+                        { id: 'net-1', title: 'CompTIA Network+', link: 'https://www.youtube.com/playlist?list=PLH-n8YK76vIiuIZoWvHL7AvtrDV7hR3He', completed: false },
+                        { id: 'net-2', title: 'CCNA', link: 'https://www.youtube.com/playlist?list=PLZmPGUyBFvUrvoa-NYzcUWFpxoZR11id_', completed: false }
+                    ],
+                },
             ],
         };
 
+        // Offensive
         const initialPentestSection = {
             id: 'pentest',
             title: 'Offensive Security',
-            subtitle: 'Penetration Testing & Exploitation',
-            orderLabel: 'PHASE 02',
+            subtitle: 'Penetration Testing',
             color: 'red',
             icon: 'shield',
+            image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop', 
+            description: 'Learn to think like an adversary. Master exploitation, Burp Suite, and OSCP.',
             categories: [
                 {
                     id: 'security-basics', title: 'Security Basics', icon: 'shield', color: 'red',
-                    courses: [{ id: 'sec-1', title: 'Security+ SY0-601 Prep', link: 'https://www.youtube.com/playlist?list=PLv7cogHXoVhXvHPzIl1dWtBiYUAL8baHj', completed: false }],
+                    courses: [{ id: 'sec-1', title: 'Security+ SY0-601 Prep', link: 'https://netriders.academy/courses/security/', completed: false }],
                 },
                 {
                     id: 'pentesting', title: 'Penetration Testing', icon: 'lock', color: 'red',
                     courses: [
-                        { id: 'pen-1', title: 'eJPTv1 Prep', link: 'https://www.youtube.com/watch?v=MFanMkTGJSo', completed: false },
-                        { id: 'pen-2', title: 'Web Application Penetration Testing Course', link: 'https://netriders.academy/courses/penetration-testing-student', completed: false }
+                        { id: 'pen-1', title: 'eJPTv1 Prep', link: 'https://netriders.academy/courses/penetration-testing-student', completed: false },
+                        { id: 'pen-2', title: 'Web Application Penetration Testing Course', link: 'https://www.youtube.com/playlist?list=PLv7cogHXoVhXvHPzIl1dWtBiYUAL8baHj', completed: false }
                     ],
                 },
                 {
                     id: 'wapt', title: 'WAPT', icon: 'bug', color: 'red',
                     courses: [
-                        { id: 'wapt-1', title: 'Web App Basics + Burp Suite + ZAP', link: 'https://www.youtube.com/playlist?list=PLX621demLUSaA7ngeN7UfVzYJihHnEfv0', completed: false },
-                        { id: 'wapt-2', title: 'Crash Course', link: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAypWmEHEy3awR6Ek9sUe5ZS', completed: false },
-                        { id: 'wapt-3', title: 'WAPT Course', link: 'https://www.youtube.com/playlist?list=PL5dZpxpUkHPOeYRHNLOCapZssjgwG6lVr', completed: false }
+                        { id: 'wapt-1', title: 'Crash Course for pentest', link: 'https://youtu.be/rT9No0gdUGE?si=yWMKgOedLMvmGZIi', completed: false },
+                        { id: 'wapt-2', title: 'WAPT Course', link: 'https://www.youtube.com/playlist?list=PLX621demLUSaA7ngeN7UfVzYJihHnEfv0', completed: false }
                     ],
                 },
                 {
                     id: 'oscp', title: 'OSCP', icon: 'zap', color: 'red',
-                    courses: [{ id: 'oscp-1', title: 'OSCP', link: 'https://www.youtube.com/playlist?list=PLZmPGUyBFvUrvoa-NYzcUWFpxoZR11id_', completed: false }],
+                    courses: [{ id: 'oscp-1', title: 'OSCP', link: 'https://www.youtube.com/playlist?list=PL5dZpxpUkHPOeYRHNLOCapZssjgwG6lVr', completed: false }],
                 },
                 {
                     id: 'active-directory', title: 'ActiveDirectory', icon: 'terminal', color: 'red',
-                    courses: [{ id: 'ad-1', title: 'ActiveDirectory-101', link: 'https://www.youtube.com/watch?v=6GPZthxEKU0', completed: false }],
+                    courses: [{ id: 'ad-1', title: 'ActiveDirectory-101', link: 'https://www.youtube.com/playlist?list=PLyyAUp-Erl9WhBzp1ma2NzYQEb1nfQM1t', completed: false }],
                 },
             ],
         };
 
+        // Defense (Image updated previously)
         const initialMonitoringSection = {
             id: 'monitoring',
-            title: 'Defense & Monitoring',
-            subtitle: 'Blue Team Operations',
-            orderLabel: 'PHASE 03',
+            title: 'Continuous Monitoring',
+            subtitle: 'Security Operations',
             color: 'purple',
             icon: 'activity',
+            image: 'https://images.unsplash.com/photo-1563986768494-4dee2763ff3f', 
+            description: 'Protect systems, monitor for threats, and understand OWASP standards.',
             categories: [
                 {
                     id: 'owasp', title: 'OWASP Top 10', icon: 'eye', color: 'purple',
@@ -262,10 +387,11 @@
             ],
         };
 
-        // --- 3. APP LOGIC ---
-        let sections = [initialBasicsSection, initialPentestSection, initialMonitoringSection];
+        const sections = [initialFundamentalsSection, initialPentestSection, initialMonitoringSection];
+        let currentView = 'dashboard'; 
         let collapsedCategories = {};
 
+        // --- 4. LOGIC ---
         const getCourses = (cat) => cat.courses ? cat.courses : (cat.subCategories ? cat.subCategories.flatMap(s => s.courses || []) : []);
         const getAllCourses = (sec) => sec.categories.flatMap(getCourses);
         const calcProgress = (arr) => arr.length ? Math.round((arr.filter(c => c.completed).length / arr.length) * 100) : 0;
@@ -273,25 +399,28 @@
         const theme = (color) => {
             const map = {
                 cyan: { 
-                    bg: 'bg-white dark:bg-slate-800/50', 
-                    border: 'border-slate-200 dark:border-slate-700', 
+                    bg: 'bg-white dark:bg-[#050505]', 
+                    border: 'border-slate-200 dark:border-gray-800', 
                     text: 'text-cyan-600 dark:text-cyan-400', 
-                    bgAccent: 'bg-cyan-50 dark:bg-cyan-500/10',
-                    bar: 'bg-cyan-500'
+                    bgAccent: 'bg-cyan-50 dark:bg-cyan-900/20',
+                    bar: 'bg-cyan-500',
+                    hover: 'hover:border-cyan-500 dark:hover:border-cyan-400'
                 },
                 red: { 
-                    bg: 'bg-white dark:bg-slate-800/50', 
-                    border: 'border-slate-200 dark:border-slate-700', 
+                    bg: 'bg-white dark:bg-[#050505]', 
+                    border: 'border-slate-200 dark:border-gray-800', 
                     text: 'text-rose-600 dark:text-rose-400', 
-                    bgAccent: 'bg-rose-50 dark:bg-rose-500/10',
-                    bar: 'bg-rose-500'
+                    bgAccent: 'bg-rose-50 dark:bg-rose-900/20',
+                    bar: 'bg-rose-500',
+                    hover: 'hover:border-rose-500 dark:hover:border-rose-400'
                 },
                 purple: { 
-                    bg: 'bg-white dark:bg-slate-800/50', 
-                    border: 'border-slate-200 dark:border-slate-700', 
+                    bg: 'bg-white dark:bg-[#050505]', 
+                    border: 'border-slate-200 dark:border-gray-800', 
                     text: 'text-violet-600 dark:text-violet-400', 
-                    bgAccent: 'bg-violet-50 dark:bg-violet-500/10',
-                    bar: 'bg-violet-500'
+                    bgAccent: 'bg-violet-50 dark:bg-violet-900/20',
+                    bar: 'bg-violet-500',
+                    hover: 'hover:border-violet-500 dark:hover:border-violet-400'
                 }
             };
             return map[color] || map.cyan;
@@ -314,51 +443,117 @@
             render();
         };
 
-        const render = () => {
-            const app = document.getElementById('app');
-            app.innerHTML = '';
+        const goHome = () => {
+            currentView = 'dashboard';
+            render();
+        };
 
-            sections.forEach(sec => {
+        const openSection = (id) => {
+            currentView = id;
+            render();
+        };
+
+        const render = () => {
+            const appDashboard = document.getElementById('dashboard-view');
+            const appDetail = document.getElementById('detail-view');
+            const cardsContainer = document.getElementById('cards-container');
+            const sectionContainer = document.getElementById('section-container');
+
+            if (currentView === 'dashboard') {
+                appDashboard.classList.remove('hidden');
+                appDetail.classList.add('hidden');
+                cardsContainer.innerHTML = '';
+
+                sections.forEach(sec => {
+                    const styles = theme(sec.color);
+                    const courses = getAllCourses(sec);
+                    const progress = calcProgress(courses);
+
+                    const card = document.createElement('div');
+                    card.className = `group relative w-full rounded-2xl overflow-hidden border ${styles.border} ${styles.bg} shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 cursor-pointer flex flex-col h-full ${styles.hover}`;
+                    card.onclick = () => openSection(sec.id);
+
+                    card.innerHTML = `
+                        <!-- Image Header (Top) -->
+                        <div class="w-full h-48 overflow-hidden relative">
+                            <img src="${sec.image}" alt="${sec.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 group-hover:from-black/20 to-transparent"></div>
+                            
+                            <!-- Floating Progress Badge -->
+                            <div class="absolute top-4 right-4">
+                                <div class="inline-block px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-xs font-bold font-mono text-white border border-white/20 shadow-lg group-hover:scale-110 transition-transform">
+                                    ${progress}% COMPLETE
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Body (Bottom) -->
+                        <div class="p-6 relative z-10 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 rounded-lg ${styles.bgAccent} ${styles.text} transition-colors group-hover:scale-110 duration-300">
+                                        <i data-lucide="${sec.icon}" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-xl font-black font-mono text-slate-900 dark:text-white uppercase tracking-tight group-hover:${styles.text} transition-colors">${sec.title}</h2>
+                                        <p class="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest mt-1">${sec.subtitle}</p>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-slate-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+                                    ${sec.description}
+                                </p>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="w-full">
+                                <div class="flex justify-between text-xs font-bold text-slate-500 dark:text-gray-500 mb-2 uppercase tracking-wider">
+                                    <span>Progress</span>
+                                    <span class="${styles.text}">${progress}%</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-200 dark:bg-gray-900 rounded-full overflow-hidden">
+                                    <div class="h-full ${styles.bar} rounded-full transition-all duration-500 ease-out" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(card);
+                });
+
+            } else {
+                appDashboard.classList.add('hidden');
+                appDetail.classList.remove('hidden');
+                sectionContainer.innerHTML = '';
+
+                const sec = sections.find(s => s.id === currentView);
+                if(!sec) return;
+
                 const styles = theme(sec.color);
                 const courses = getAllCourses(sec);
                 const progress = calcProgress(courses);
 
-                // Card
                 const card = document.createElement('div');
-                card.className = `${styles.bg} border ${styles.border} rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden backdrop-blur-sm`;
+                card.className = `${styles.bg} border ${styles.border} rounded-2xl shadow-xl overflow-hidden`;
 
-                // Header
+                // Detail Header
                 card.innerHTML = `
-                    <div class="p-6 border-b border-slate-100 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="flex items-center gap-4">
-                            <div class="p-3 rounded-xl ${styles.bgAccent} text-current">
-                                <i data-lucide="${sec.icon}" class="w-6 h-6 ${styles.text}"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-slate-800 dark:text-white font-mono tracking-tight">${sec.title}</h2>
-                                <div class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                    <span>${sec.subtitle}</span>
-                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                                    <span class="font-mono text-xs uppercase opacity-70">${sec.orderLabel}</span>
-                                </div>
-                            </div>
+                    <div class="p-8 border-b border-slate-200 dark:border-gray-800 flex items-center gap-6">
+                        <div class="p-4 rounded-xl ${styles.bgAccent} ${styles.text}">
+                            <i data-lucide="${sec.icon}" class="w-8 h-8"></i>
                         </div>
-                        <div class="flex items-center gap-4 w-full md:w-auto">
-                            <div class="flex-1 md:w-32">
-                                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
-                                    <span>Progress</span>
-                                    <span class="${styles.text}">${progress}%</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
-                                    <div class="h-full ${styles.bar} rounded-full transition-all duration-500 ease-out" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
+                        <div class="flex-1">
+                            <h2 class="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight uppercase">${sec.title}</h2>
+                            <div class="text-sm font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest mt-1">${sec.subtitle}</div>
+                        </div>
+                        <div class="text-right min-w-[100px]">
+                             <div class="text-4xl font-black ${styles.text}">${progress}%</div>
+                             <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Done</div>
                         </div>
                     </div>
                 `;
 
                 const body = document.createElement('div');
-                body.className = 'p-6';
+                body.className = 'p-8';
 
                 sec.categories.forEach(cat => {
                     const catCourses = getCourses(cat);
@@ -366,15 +561,15 @@
                     const isCollapsed = collapsedCategories[cat.id];
 
                     const catBox = document.createElement('div');
-                    catBox.className = 'mb-4 last:mb-0 border border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden';
+                    catBox.className = 'mb-6 last:mb-0 border border-slate-200 dark:border-gray-800 rounded-xl overflow-hidden';
 
                     catBox.innerHTML = `
-                        <div class="p-4 cursor-pointer flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors bg-slate-50/50 dark:bg-slate-900/20" onclick="toggleCollapse('${cat.id}')">
-                            <div class="flex items-center gap-3">
-                                <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-4 h-4 text-slate-400"></i>
-                                <div class="font-semibold text-slate-700 dark:text-slate-200">${cat.title}</div>
+                        <div class="p-5 cursor-pointer flex justify-between items-center hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors bg-slate-50/50 dark:bg-[#050505]" onclick="toggleCollapse('${cat.id}')">
+                            <div class="flex items-center gap-4">
+                                <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-5 h-5 text-slate-400 dark:text-gray-500"></i>
+                                <div class="font-bold text-lg text-slate-800 dark:text-gray-200 tracking-wide">${cat.title}</div>
                             </div>
-                            <div class="text-xs font-mono font-medium px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                            <div class="text-xs font-mono font-bold px-4 py-2 rounded-lg bg-white dark:bg-black border border-slate-200 dark:border-gray-800 text-slate-500 dark:text-gray-500 shadow-sm">
                                 ${catProg}%
                             </div>
                         </div>
@@ -382,31 +577,46 @@
 
                     if (!isCollapsed) {
                         const list = document.createElement('div');
-                        list.className = 'border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/10';
+                        list.className = 'border-t border-slate-200 dark:border-gray-800 bg-white dark:bg-black';
                         
                         const renderItem = (c) => {
                             const row = document.createElement('div');
-                            row.className = 'p-4 border-b border-slate-50 dark:border-slate-800/50 last:border-0 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors';
+                            row.className = 'p-5 border-b border-slate-200 dark:border-gray-800 last:border-0 flex items-center justify-between group hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors gap-6';
                             
                             const checkClass = c.completed 
-                                ? 'bg-cyan-500 border-cyan-500 text-white' 
-                                : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-transparent';
+                                ? 'bg-emerald-500 border-emerald-500 text-white' 
+                                : 'bg-white dark:bg-[#1a1a1a] border-slate-300 dark:border-gray-700 text-transparent hover:border-emerald-500';
                             
                             const textClass = c.completed 
-                                ? 'text-slate-900 dark:text-white font-medium line-through decoration-slate-400 opacity-70' 
-                                : 'text-slate-600 dark:text-slate-300';
+                                ? 'text-slate-900 dark:text-white font-bold line-through decoration-slate-400 opacity-50' 
+                                : 'text-slate-800 dark:text-gray-200 font-bold';
+
+                            const completeBtnClass = c.completed
+                                ? 'bg-emerald-500 text-white border-emerald-500'
+                                : 'bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-slate-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-400 hover:text-emerald-500';
 
                             row.innerHTML = `
-                                <div class="flex items-center cursor-pointer flex-1 gap-3" onclick="toggleCourse('${c.id}', '${sec.id}')">
-                                    <div class="relative w-5 h-5 flex-shrink-0 transition-all duration-200">
-                                        <div class="absolute inset-0 rounded-md ${checkClass} shadow-sm"></div>
-                                        ${c.completed ? '<i data-lucide="check" class="w-3.5 h-3.5 absolute top-0.5 left-0.5"></i>' : ''}
+                                <div class="flex items-center cursor-pointer flex-1 gap-4" onclick="toggleCourse('${c.id}', '${sec.id}')">
+                                    <div class="relative w-6 h-6 flex-shrink-0 transition-all duration-200">
+                                        <div class="absolute inset-0 rounded-md ${checkClass} border-2"></div>
+                                        ${c.completed ? '<i data-lucide="check" class="w-4 h-4 absolute top-0.5 left-0.5"></i>' : ''}
                                     </div>
-                                    <span class="text-sm ${textClass} group-hover:text-slate-900 dark:group-hover:text-white transition-colors">${c.title}</span>
+                                    <span class="text-base ${textClass} group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate">${c.title}</span>
                                 </div>
-                                <a href="${c.link}" target="_blank" class="p-2 text-slate-400 hover:text-cyan-500 transition-colors rounded-lg hover:bg-cyan-50 dark:hover:bg-cyan-500/10">
-                                    <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
+                                
+                                <div class="flex items-center gap-3 ml-4">
+                                    <button onclick="event.stopPropagation(); toggleCourse('${c.id}', '${sec.id}')" 
+                                        class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-200 hover:scale-110 shadow-sm ${completeBtnClass}"
+                                        title="${c.completed ? 'Mark Incomplete' : 'Mark Complete'}">
+                                        <i data-lucide="check" class="w-5 h-5"></i>
+                                    </button>
+                                    
+                                    <a href="${c.link}" target="_blank" 
+                                        class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[#1a1a1a] text-slate-400 dark:text-gray-500 border-2 border-slate-300 dark:border-gray-700 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all duration-200 hover:scale-110 shadow-sm"
+                                        title="Open Link">
+                                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                                    </a>
+                                </div>
                             `;
                             return row;
                         };
@@ -415,8 +625,8 @@
                         if (cat.subCategories) {
                             cat.subCategories.forEach(sub => {
                                 const subHeader = document.createElement('div');
-                                subHeader.className = 'px-4 py-2 bg-slate-50 dark:bg-slate-800/30 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 flex items-center gap-2';
-                                subHeader.innerHTML = `<i data-lucide="${sub.icon}" class="w-3 h-3"></i> ${sub.title}`;
+                                subHeader.className = 'px-6 py-3 bg-slate-50 dark:bg-[#0a0a0a] text-xs font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest border-b border-slate-200 dark:border-gray-800 flex items-center gap-3';
+                                subHeader.innerHTML = `<i data-lucide="${sub.icon}" class="w-4 h-4"></i> ${sub.title}`;
                                 list.appendChild(subHeader);
                                 sub.courses.forEach(c => list.appendChild(renderItem(c)));
                             });
@@ -427,13 +637,13 @@
                 });
 
                 card.appendChild(body);
-                app.appendChild(card);
-            });
+                sectionContainer.appendChild(card);
+            }
             lucide.createIcons();
         };
 
         render();
 
     </script>
-</body>
-</html>
+
+</body></html>
