@@ -80,7 +80,6 @@
         main { padding-bottom: 140px; }
         .modal-backdrop { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
         
-        /* Image Upload Styles */
         .img-upload-area {
             border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px;
             text-align: center; cursor: pointer; transition: all 0.3s;
@@ -89,6 +88,52 @@
         .img-upload-area.has-image { border-style: solid; border-color: #06b6d4; }
         .dark .img-upload-area { border-color: #374151; }
         .dark .img-upload-area:hover { border-color: #06b6d4; background: rgba(6, 182, 212, 0.1); }
+
+        /* أزرار التحريك */
+        .move-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: #e2e8f0;
+            color: #475569;
+            transition: all 0.2s;
+            border: 1px solid #cbd5e1;
+        }
+        .move-btn:hover:not(:disabled) {
+            background: #06b6d4;
+            color: white;
+            border-color: #06b6d4;
+        }
+        .move-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .dark .move-btn {
+            background: #1f2937;
+            color: #9ca3af;
+            border-color: #374151;
+        }
+        .dark .move-btn:hover:not(:disabled) {
+            background: #06b6d4;
+            color: white;
+            border-color: #06b6d4;
+        }
+
+        .reorder-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-right: 12px;
+            padding: 4px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        .dark .reorder-controls {
+            background: rgba(255,255,255,0.05);
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-900 dark:bg-[#020202] dark:text-white min-h-screen selection:bg-cyan-500 selection:text-white relative overflow-x-hidden font-sans">
@@ -391,6 +436,53 @@
             currentView = 'detail';
             currentSectionId = id;
             render();
+        }
+
+        // --- MOVE FUNCTIONS ---
+        function moveCategory(secId, catId, direction) {
+            event.stopPropagation();
+            const sec = sections.find(s => s.id === secId);
+            if (!sec) return;
+            
+            const idx = sec.categories.findIndex(c => c.id === catId);
+            if (idx === -1) return;
+            
+            const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (newIdx < 0 || newIdx >= sec.categories.length) return;
+            
+            const temp = sec.categories[idx];
+            sec.categories[idx] = sec.categories[newIdx];
+            sec.categories[newIdx] = temp;
+            saveData();
+        }
+
+        function moveCourse(catId, courseId, direction) {
+            event.stopPropagation();
+            let targetCat = null;
+            
+            for (let s of sections) {
+                for (let cat of s.categories) {
+                    if (cat.id === catId) { targetCat = cat; break; }
+                    if (cat.subCategories) {
+                        const sub = cat.subCategories.find(sub => sub.id === catId);
+                        if (sub) { targetCat = sub; break; }
+                    }
+                }
+                if (targetCat) break;
+            }
+            
+            if (!targetCat || !targetCat.courses) return;
+            
+            const idx = targetCat.courses.findIndex(c => c.id === courseId);
+            if (idx === -1) return;
+            
+            const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+            if (newIdx < 0 || newIdx >= targetCat.courses.length) return;
+            
+            const temp = targetCat.courses[idx];
+            targetCat.courses[idx] = targetCat.courses[newIdx];
+            targetCat.courses[newIdx] = temp;
+            saveData();
         }
 
         // --- CRUD ---
@@ -775,13 +867,31 @@
                     </div>`;
                 sectionContainer.appendChild(header);
 
-                sec.categories.forEach(cat => {
+                sec.categories.forEach((cat, catIndex) => {
                     const isCollapsed = collapsedCategories[cat.id];
                     const catBox = document.createElement('div');
                     catBox.className = 'mb-8 rounded-xl border border-slate-200 dark:border-gray-800 bg-white dark:bg-[#050505] overflow-hidden shadow-sm';
 
+                    const isFirstCat = catIndex === 0;
+                    const isLastCat = catIndex === sec.categories.length - 1;
+
                     let catHeader = `<div class="p-5 md:p-6 flex justify-between items-center cursor-pointer select-none hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors" onclick="toggleCollapse('${cat.id}')">
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4">`;
+                    
+                    // أزرار تحريك الـ Category (ظاهرة دائماً في Admin Mode)
+                    if(isAdminMode) {
+                        catHeader += `
+                            <div class="reorder-controls" onclick="event.stopPropagation()">
+                                <button onclick="moveCategory('${sec.id}', '${cat.id}', 'up')" class="move-btn" ${isFirstCat ? 'disabled' : ''} title="Move Up">
+                                    <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="moveCategory('${sec.id}', '${cat.id}', 'down')" class="move-btn" ${isLastCat ? 'disabled' : ''} title="Move Down">
+                                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                                </button>
+                            </div>`;
+                    }
+                    
+                    catHeader += `
                             <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-5 h-5 text-slate-400"></i>
                             <div class="p-2 rounded-lg bg-slate-100 dark:bg-gray-900 text-slate-700 dark:text-gray-300"><i data-lucide="${cat.icon}" class="w-5 h-5"></i></div>
                             <h3 class="text-xl font-bold text-slate-800 dark:text-gray-100">${cat.title}</h3>
@@ -805,7 +915,7 @@
                         listContainer.className = 'divide-y divide-slate-100 dark:divide-gray-900 bg-slate-50/30 dark:bg-[#050505]/50';
 
                         if(cat.courses && cat.courses.length > 0) {
-                            cat.courses.forEach(c => renderCourseRow(listContainer, c, cat.id, sec.id));
+                            cat.courses.forEach((c, idx) => renderCourseRow(listContainer, c, cat.id, sec.id, idx, cat.courses.length));
                         }
 
                         if(cat.subCategories && cat.subCategories.length > 0) {
@@ -821,7 +931,7 @@
                                 }
                                 subHeader.innerHTML = subHeaderContent;
                                 listContainer.appendChild(subHeader);
-                                if(sub.courses) sub.courses.forEach(c => renderCourseRow(listContainer, c, sub.id, sec.id));
+                                if(sub.courses) sub.courses.forEach((c, idx) => renderCourseRow(listContainer, c, sub.id, sec.id, idx, sub.courses.length));
                             });
                         }
 
@@ -836,11 +946,29 @@
             lucide.createIcons();
         };
 
-        function renderCourseRow(container, c, parentId, secId) {
+        function renderCourseRow(container, c, parentId, secId, index, total) {
             const row = document.createElement('div');
             row.className = 'group p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-[#0a0a0a] transition-colors relative';
+            
+            const isFirst = index === 0;
+            const isLast = index === total - 1;
+            
+            let moveButtons = '';
+            if(isAdminMode) {
+                moveButtons = `
+                    <div class="reorder-controls flex-row" style="flex-direction: row; margin-right: 8px;">
+                        <button onclick="moveCourse('${parentId}', '${c.id}', 'up')" class="move-btn" ${isFirst ? 'disabled' : ''} title="Move Up">
+                            <i data-lucide="arrow-up" class="w-3 h-3"></i>
+                        </button>
+                        <button onclick="moveCourse('${parentId}', '${c.id}', 'down')" class="move-btn" ${isLast ? 'disabled' : ''} title="Move Down">
+                            <i data-lucide="arrow-down" class="w-3 h-3"></i>
+                        </button>
+                    </div>`;
+            }
+            
             row.innerHTML = `
-                <div class="flex items-center gap-4 flex-1 min-w-0">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    ${moveButtons}
                     <button onclick="toggleComplete('${secId}', '${parentId}', '${c.id}')" class="shrink-0 w-6 h-6 rounded border ${c.completed ? 'bg-cyan-500 border-cyan-500 text-white' : 'border-slate-300 dark:border-gray-600 text-transparent'} flex items-center justify-center transition-all hover:border-cyan-500">
                         <i data-lucide="check" class="w-4 h-4"></i>
                     </button>
